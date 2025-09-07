@@ -1,253 +1,160 @@
 #!/bin/bash
+set -euo pipefail
 
-# Definisi warna
-BIRU='\033[0;34m'       
+# Warna
+BIRU='\033[0;34m'
 MERAH='\033[0;31m'
 HIJAU='\033[0;32m'
 KUNING='\033[0;33m'
 NC='\033[0m'
 
-# Array untuk menyimpan token-token yang valid
+# Token valid
 valid_tokens=("kyzo12" "kyy11" "buy")
 
-# Fungsi untuk menampilkan pesan selamat datang
-display_welcome() {
-  echo -e ""
-  echo -e "${MERAH}[+] =============================================== [+]${NC}"
-  echo -e "${MERAH}[+]                                                 [+]${NC}"
-  echo -e "${MERAH}[+]                AUTO INSTALLER THEMA             [+]${NC}"
-  echo -e "${MERAH}[+]                  © KYZO OFFICIAL                [+]${NC}"
-  echo -e "${MERAH}[+]                                                 [+]${NC}"
-  echo -e "${MERAH}[+] =============================================== [+]${NC}"
-  echo -e ""
-  echo -e "Script ini dibuat untuk mempermudah penginstalan tema Pterodactyl,"
-  echo -e "dilarang keras untuk diperjualbelikan. BY @kyzosan"
-  echo -e ""
-  echo -e "TELE :"
-  echo -e "@kyzosan"
-  echo -e "YT :"
-  echo -e "@rvmzngaceng"
-  echo -e "CR :"
-  echo -e "Kyzo"
-  echo -e "Kyzo Official"
-  sleep 4
-  clear
+# Fungsi pause
+pause() {
+  echo ""
+  read -rp "Tekan [Enter] untuk melanjutkan..."
 }
 
-# Fungsi untuk melakukan otentikasi pengguna
+# Banner awal
+display_welcome() {
+  clear
+  cat <<EOF
+${MERAH}[+] =============================================== [+]${NC}
+${MERAH}[+]                AUTO INSTALLER THEME             [+]${NC}
+${MERAH}[+]                  © KYZO OFFICIAL                [+]${NC}
+${MERAH}[+] =============================================== [+]${NC}
+
+Script ini dibuat untuk mempermudah penginstalan tema Pterodactyl.
+Dilarang keras untuk diperjualbelikan. BY @kyzosan
+
+Kontak:
+  Telegram : @kyzosan
+  YouTube  : @rvmzngaceng
+  Credit   : Kyzo - Kyzo Official
+EOF
+  pause
+}
+
+# Otentikasi
 authenticate() {
   local authenticated=false
-  echo -e "Masukkan token:"
-  read -r USER_TOKEN
-  
-  # Memeriksa apakah token pengguna cocok dengan salah satu dari token-token valid
+  read -rp "Masukkan token: " USER_TOKEN
   for token in "${valid_tokens[@]}"; do
-    if [ "$USER_TOKEN" == "$token" ]; then
+    if [[ "$USER_TOKEN" == "$token" ]]; then
       authenticated=true
       break
     fi
   done
-  
-  if ! $authenticated; then
+
+  if [[ $authenticated == false ]]; then
     echo -e "${MERAH}Token tidak valid. Keluar.${NC}"
     exit 1
   fi
 }
 
-# Fungsi untuk menginstal tema
+# Pilihan tema
+select_theme() {
+  clear
+  echo -e "${MERAH}[+] =============================================== [+]${NC}"
+  echo -e "${MERAH}[+]                   SELECT THEME                 [+]${NC}"
+  echo -e "${MERAH}[+] =============================================== [+]${NC}"
+  echo ""
+  echo "1. Stellar"
+  echo "2. Billing"
+  echo "3. Enigma"
+  echo "x. Kembali"
+  echo ""
+  read -rp "Masukkan pilihan (1/2/3/x): " SELECT_THEME
 
-# Fungsi untuk menginstal tema
+  case "$SELECT_THEME" in
+    1) THEME_URL="https://github.com/DITZZ112/foxxhostt/raw/main/C2.zip" ;;
+    2) THEME_URL="https://github.com/DITZZ112/foxxhostt/raw/main/C1.zip" ;;
+    3) THEME_URL="https://github.com/DITZZ112/foxxhostt/raw/main/C3.zip" ;;
+    x) return 1 ;;
+    *) echo -e "${MERAH}Pilihan tidak valid.${NC}" ; sleep 2 ; return 1 ;;
+  esac
+  return 0
+}
+
+# Install theme
 install_theme() {
-  while true; do
-    clear
-    echo -e "                                                       "
-    echo -e "${MERAH}[+] =============================================== [+]${NC}"
-    echo -e "${MERAH}[+]                   SELECT THEME                 [+]${NC}"
-    echo -e "${MERAH}[+] =============================================== [+]${NC}"
-    echo -e "                                                       "
-    echo -e "PILIH THEME YANG INGIN DI INSTALL"
-    echo "1. stellar"
-    echo "2. billing"
-    echo "3. enigma"
-    echo "x. kembali"
-    echo -e "masukan pilihan (1/2/3/x) :"
-    read -r SELECT_THEME
-    case "$SELECT_THEME" in
-      1)
-        THEME_URL=$(echo -e "\x68\x74\x74\x70\x73\x3A\x2F\x2F\x67\x69\x74\x68\x75\x62\x2E\x63\x6F\x6D\x2F\x44\x49\x54\x5A\x5A\x31\x31\x32\x2F\x66\x6F\x78\x78\x68\x6F\x73\x74\x74\x2F\x72\x61\x77\x2F\x6D\x61\x69\x6E\x2F\x43\x32\x2E\x7A\x69\x70")
-        break
-        ;;
-      2)
-        THEME_URL=$(echo -e "\x68\x74\x74\x70\x73\x3A\x2F\x2F\x67\x69\x74\x68\x75\x62\x2E\x63\x6F\x6D\x2F\x44\x49\x54\x5A\x5A\x31\x31\x32\x2F\x66\x6F\x78\x78\x68\x6F\x73\x74\x74\x2F\x72\x61\x77\x2F\x6D\x61\x69\x6E\x2F\x43\x31\x2E\x7A\x69\x70")
-        break
-        ;;
-      3)
-        THEME_URL=$(echo -e "\x68\x74\x74\x70\x73\x3A\x2F\x2F\x67\x69\x74\x68\x75\x62\x2E\x63\x6F\x6D\x2F\x44\x49\x54\x5A\x5A\x31\x31\x32\x2F\x66\x6F\x78\x78\x68\x6F\x73\x74\x74\x2F\x72\x61\x77\x2F\x6D\x61\x69\x6E\x2F\x43\x33\x2E\x7A\x69\x70")
-        break
-        ;; 
-      x)
-        return
-        ;;
-      *)
-        echo -e "${MERAH}Pilihan tidak valid, silahkan coba lagi.${NC}"
-        ;;
-    esac
-  done
-  
-  if [ -e /root/pterodactyl ]; then
-    sudo rm -rf /root/pterodactyl
-  fi
+  while ! select_theme; do :; done
+
+  rm -rf /root/pterodactyl || true
   wget -q "$THEME_URL"
-  sudo unzip -o "$(basename "$THEME_URL")"
-  
-  if [ "$SELECT_THEME" -eq 1 ]; then
-    echo -e "                                                       "
-    echo -e "${MERAH}[+] =============================================== [+]${NC}"
-    echo -e "${MERAH}[+]                  INSTALLASI THEMA              [+]${NC}"
-    echo -e "${MERAH}[+] =============================================== [+]${NC}"
-    echo -e "                                                                   "
-    sudo cp -rfT /root/pterodactyl /var/www/pterodactyl
-    curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-    sudo apt install -y nodejs
-    sudo npm i -g yarn
-    cd /var/www/pterodactyl
-    yarn add react-feather
-    php artisan migrate
-    yarn build:production
-    php artisan view:clear
-    sudo rm /root/C2.zip
-    sudo rm -rf /root/pterodactyl
+  unzip -o "$(basename "$THEME_URL")" -d /root/
 
-    echo -e "                                                       "
-    echo -e "${HIJAU}[+] =============================================== [+]${NC}"
-    echo -e "${HIJAU}[+]                   INSTALL SUCCESS               [+]${NC}"
-    echo -e "${HIJAU}[+] =============================================== [+]${NC}"
-    echo -e ""
-    sleep 2
-    clear
-    return
-
-  elif [ "$SELECT_THEME" -eq 2 ]; then
-    echo -e "                                                       "
-    echo -e "${BIRU}[+] =============================================== [+]${NC}"
-    echo -e "${BIRU}[+]                  INSTALLASI THEMA              [+]${NC}"
-    echo -e "${BIRU}[+] =============================================== [+]${NC}"
-    echo -e "                                                       "
-    sudo cp -rfT /root/pterodactyl /var/www/pterodactyl
-    curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-    sudo apt install -y nodejs
-    npm i -g yarn
-    cd /var/www/pterodactyl
-    yarn add react-feather
-    php artisan billing:install stable
-    php artisan migrate
-    yarn build:production
-    php artisan view:clear
-    sudo rm /root/C1.zip
-    sudo rm -rf /root/pterodactyl
-
-    echo -e "                                                       "
-    echo -e "${HIJAU}[+] =============================================== [+]${NC}"
-    echo -e "${HIJAU}[+]                   INSTALL SUCCESS               [+]${NC}"
-    echo -e "${HIJAU}[+] =============================================== [+]${NC}"
-    echo -e "                                                       "
-    sleep 2
-    clear
-    return
-
-  elif [ "$SELECT_THEME" -eq 3 ]; then
-    echo -e "                                                       "
-    echo -e "${BIRU}[+] =============================================== [+]${NC}"
-    echo -e "${BIRU}[+]                  INSTALLASI THEMA              [+]${NC}"
-    echo -e "${BIRU}[+] =============================================== [+]${NC}"
-    echo -e "                                                                   "
-
-    # Menanyakan informasi kepada pengguna untuk tema Enigma
-    echo -e "${KUNING}Masukkan link untuk 'LINK_BC_BOT': ${NC}"
-    read LINK_WA
-    echo -e "${KUNING}Masukkan nama untuk 'NAMA_OWNER_PANEL': ${NC}"
-    read LINK_GROUP
-    echo -e "${KUNING}Masukkan link untuk 'LINK_GC_INFO': ${NC}"
-    read LINK_CHNL
-
-    # Mengganti placeholder dengan nilai dari pengguna
-    sudo sed -i "s|LINK_WA|$LINK_WA|g" /root/pterodactyl/resources/scripts/components/dashboard/DashboardContainer.tsx
-    sudo sed -i "s|LINK_GROUP|$LINK_GROUP|g" /root/pterodactyl/resources/scripts/components/dashboard/DashboardContainer.tsx
-    sudo sed -i "s|LINK_CHNL|$LINK_CHNL|g" /root/pterodactyl/resources/scripts/components/dashboard/DashboardContainer.tsx
-    
-    sudo cp -rfT /root/pterodactyl /var/www/pterodactyl
-    curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-    sudo apt install -y nodejs
-    sudo npm i -g yarn
-    cd /var/www/pterodactyl
-    yarn add react-feather
-    php artisan migrate
-    yarn build:production
-    php artisan view:clear
-    sudo rm /root/C3.zip
-    sudo rm -rf /root/pterodactyl
-
-    echo -e "                                                       "
-    echo -e "${HIJAU}[+] =============================================== [+]${NC}"
-    echo -e "${HIJAU}[+]                   INSTALL SUCCESS               [+]${NC}"
-    echo -e "${HIJAU}[+] =============================================== [+]${NC}"
-    echo -e ""
-    sleep 5
-  else
-    echo ""
-    echo "Pilihan tidak valid. silahkan pilih 1/2/3."
-  fi
-}
-
-# Fungsi untuk menghapus tema
-uninstall_theme() {
-  echo -e "                                                       "
-  echo -e "${MERAH}[+] =============================================== [+]${NC}"
-  echo -e "${MERAH}[+]                    DELETE THEME                 [+]${NC}"
-  echo -e "${MERAH}[+] =============================================== [+]${NC}"
-  echo -e "                                                       "
-  bash <(curl https://raw.githubusercontent.com/xkyzo1/themeky/refs/heads/main/repair.sh)
-  echo -e "                                                       "
-  echo -e "${MERAH}[+] =============================================== [+]${NC}"
-  echo -e "${MERAH}[+]                 DELETE THEME SUKSES             [+]${NC}"
-  echo -e "${MERAH}[+] =============================================== [+]${NC}"
-  echo -e "                                                       "
-  sleep 2
-  clear
-}
-
-# Skrip utama
-display_welcome
-authenticate
-
-while true; do
-  clear
-  echo -e "                                                       "
-  echo -e "${MERAH}[+] =============================================== [+]${NC}"
-  echo -e "${MERAH}[+]                   SELECT OPTION                 [+]${NC}"
-  echo -e "${MERAH}[+] =============================================== [+]${NC}"
-  echo -e "                                                       "
-  echo -e "SELECT OPTION :"
-  echo "1. Install theme"
-  echo "2. Uninstall theme"
-  echo "x. Exit"
-  echo -e "Masukkan pilihan (1/2/x):"
-  read -r MENU_CHOICE
-  clear
-
-  case "$MENU_CHOICE" in
+  case "$SELECT_THEME" in
     1)
-      install_theme
+      echo -e "${BIRU}Menginstall Stellar...${NC}"
       ;;
     2)
-      uninstall_theme
+      echo -e "${BIRU}Menginstall Billing...${NC}"
       ;;
-    x)
-      echo "Keluar dari skrip."
-      exit 0
-      ;;
-    *)
-      echo "Pilihan tidak valid, silahkan coba lagi."
+    3)
+      echo -e "${BIRU}Menginstall Enigma...${NC}"
+      read -rp "Masukkan link untuk 'LINK_BC_BOT': " LINK_WA
+      read -rp "Masukkan nama untuk 'NAMA_OWNER_PANEL': " LINK_GROUP
+      read -rp "Masukkan link untuk 'LINK_GC_INFO': " LINK_CHNL
+
+      sed -i "s|LINK_WA|$LINK_WA|g" /root/pterodactyl/resources/scripts/components/dashboard/DashboardContainer.tsx
+      sed -i "s|LINK_GROUP|$LINK_GROUP|g" /root/pterodactyl/resources/scripts/components/dashboard/DashboardContainer.tsx
+      sed -i "s|LINK_CHNL|$LINK_CHNL|g" /root/pterodactyl/resources/scripts/components/dashboard/DashboardContainer.tsx
       ;;
   esac
-done
+
+  cp -rfT /root/pterodactyl /var/www/pterodactyl
+  curl -sL https://deb.nodesource.com/setup_16.x | bash -
+  apt install -y nodejs
+  npm i -g yarn
+  cd /var/www/pterodactyl
+  yarn add react-feather
+  php artisan migrate
+  [[ "$SELECT_THEME" == "2" ]] && php artisan billing:install stable
+  yarn build:production
+  php artisan view:clear
+
+  rm -f /root/C{1,2,3}.zip
+  rm -rf /root/pterodactyl
+
+  echo -e "${HIJAU}Installasi tema selesai.${NC}"
+  pause
+}
+
+# Uninstall theme
+uninstall_theme() {
+  echo -e "${MERAH}Menghapus tema...${NC}"
+  bash <(curl -s https://raw.githubusercontent.com/xkyzo1/themeky/refs/heads/main/repair.sh)
+  echo -e "${HIJAU}Tema berhasil dihapus.${NC}"
+  pause
+}
+
+# Main menu
+main_menu() {
+  while true; do
+    clear
+    echo -e "${MERAH}[+] =============================================== [+]${NC}"
+    echo -e "${MERAH}[+]                   MAIN MENU                     [+]${NC}"
+    echo -e "${MERAH}[+] =============================================== [+]${NC}"
+    echo ""
+    echo "1. Install Theme"
+    echo "2. Uninstall Theme"
+    echo "x. Exit"
+    echo ""
+    read -rp "Masukkan pilihan (1/2/x): " MENU_CHOICE
+
+    case "$MENU_CHOICE" in
+      1) install_theme ;;
+      2) uninstall_theme ;;
+      x) echo "Keluar dari script." ; exit 0 ;;
+      *) echo "Pilihan tidak valid." ; sleep 2 ;;
+    esac
+  done
+}
+
+# Run
+display_welcome
+authenticate
+main_menu
